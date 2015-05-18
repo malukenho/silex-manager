@@ -206,4 +206,9 @@ final class Node // implements ConfigNode
     {
         return $this->where;
     }
+
+    public function getSearchInputs()
+    {
+        return $this->search['input'];
+    }
 }
