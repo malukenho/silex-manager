@@ -112,6 +112,14 @@ final class Node // implements ConfigNode
     }
 
     /**
+     * @return bool|array
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
      * @return string
      */
     public function getPrimaryKey()
