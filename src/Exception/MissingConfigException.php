@@ -2,6 +2,6 @@
 
 namespace Manager\Exception;
 
-class MissingConfigException extends \RuntimeException
+final class MissingConfigException extends \RuntimeException
 {
 }
