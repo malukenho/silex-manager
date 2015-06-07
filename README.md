@@ -4,6 +4,8 @@ Silex Manager
 Silex Manager is a easy way to create crap CRUD based application.
 We know that CRUD based apps is so bad, but It's needed some times.
 
+**Now you can create crap application in minutes**
+
 ## Author
 
 - [Jefersson Nathan](https://github.com/malukenho)
@@ -30,7 +32,7 @@ First of all, you need to register the `ManagerControllerProvider` to your `Sile
 For now you should pass a `PDO` instance to the our provider.
 
 ```php
-$silex->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo));
+$app->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo));
 ```
 
 ## Routes
@@ -38,4 +40,35 @@ $silex->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo)
 | Router                        |  Bind   |          |
 |-------------------------------|---------|----------|
 | /{dbTable}/page/{pageNumber}  |         |          |
+
+### Custom queries
+
+Sometimes you will need make a custom query to show data on the list page.
+This is possible by setting the key `query`.
+
+```php
+$app['manager-config'] = [
+    'manager' => [
+        'users' => [
+            'index' => [
+                'query' => 'SELECT * FROM users u INNER JOIN user_admin ua ON u.id = ua.id',
+            ],
+        ],
+    ],
+];
+```
+
+### Actions
+
+### views
+
+### Columns
+
+### Before
+
+### After
+
+### Custom names
+
+### Modifiers
 

@@ -2,7 +2,7 @@
 
 namespace Manager\Db\Adapter;
 
-class PdoAdapter
+class ReduceDbAdapter
 {
     /**
      * @var \PDO
