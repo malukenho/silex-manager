@@ -30,6 +30,6 @@ $silex['manager-config'] = [
     ],
 ];
 
-$silex->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo));
+$silex->mount('/manager', new Manager\Controller\ManagerControllerProvider(new \Manager\Db\Adapter\PdoAdapter($pdo)));
 
 $silex->run();
