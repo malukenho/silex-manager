@@ -2,6 +2,8 @@
 
 namespace Manager\Controller;
 
+use Manager\Config\Node;
+use Manager\Db\Adapter\AdapterInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerProviderInterface;
@@ -17,11 +19,16 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     private $pdo;
 
     /**
-     * @param \PDO $pdo
+     * @var AdapterInterface
      */
-    public function __construct(\PDO $pdo)
+    private $db;
+
+    /**
+     * @param AdapterInterface $adapter
+     */
+    public function __construct(AdapterInterface $adapter)
     {
-        $this->pdo = $pdo;
+        $this->db = $adapter;
     }
 
     /**
@@ -45,79 +52,37 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     /**
      * @param Application $app
      * @param Request     $request
-     * @param             $dbTable
-     * @param             $page
+     * @param string      $dbTable
+     * @param string      $page
      *
-     * @return mixed
+     * @return string
      */
     public function index(Application $app, Request $request, $dbTable, $page)
     {
-        $action      = $app['manager-config']['manager'][$dbTable]['index'];
-        $fields      = $app['manager-config']['manager'][$dbTable]['index']['columns'];
-        $order       = isset($action['order']) ? $action['order'] : 'DESC';
-        $orderColumn = isset($action['orderColumn']) ? $action['orderColumn'] : 'id';
-        $pk          = isset($action['pk']) ? $action['pk'] : 'id';
-        $actions     = isset($action['action']) ? $action['action'] : false;
-        $header      = isset($action['header']) ? $action['header'] : sprintf('Manager: %s', $dbTable);
-        $icon        = isset($action['icon']) ? $action['icon'] : 'setting';
-        $pagination  = '';
-        $itemPerPage = isset($action['item_per_page']) ? $action['item_per_page'] : 10;
-        $pages       = 0;
-        $search      = isset($action['search']) ? $action['search'] : null;
-        $where       = '';
-        $query       = isset($action['query']) ? $action['query'] : '';
+        $config     = new Node($app, $dbTable, 'index');
+        $columns    = $config->getColumns();
+        $pagination = '';
+        $pages      = 0;
 
-        if ($request->getQueryString()) {
-            if (isset($search['input'])) {
-                $where .= ' WHERE ';
-                foreach ($search['input'] as $input) {
-                    $where .= $input['name'] . ' LIKE "%' . $request->get(str_replace('.', '_', $input['name'])) . '%" AND ';
-                }
-
-                $where = trim($where, ' AND ');
+        if ($request->getQueryString() && $config->getSearch()) {
+            foreach ($config->getSearchInputs() as $input) {
+                $this->db->whereLike($input['name'], $request->get(str_replace('.', '_', $input['name'])));
             }
         }
 
-        if ($query) {
-            $queryCount = preg_replace('/^SELECT (.+) FROM/', 'SELECT COUNT(*) as total FROM', $query);
-            $stmt       = $this->pdo->query($queryCount . ' ' . $where);
-            $result     = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $total      = $result['total'];
-        } else {
-            $stmt   = $this->pdo->query(sprintf('SELECT COUNT(*) as total FROM %s %s', $dbTable, $where));
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $total  = $result['total'];
-        }
+        $total = $this->db->count($config);
 
         if (isset($action['pagination'])) {
-            $pages      = ceil($total / $itemPerPage);
-            $offset     = ($page * $itemPerPage) - $itemPerPage;
-            $pagination = ' LIMIT ' . $offset . ',' . $itemPerPage;
+            $itemPerPage = $config->getItemPerPage();
+            $pages       = ceil($total / $itemPerPage);
+            $offset      = ($page * $itemPerPage) - $itemPerPage;
+            $pagination  = ' LIMIT ' . $offset . ',' . $itemPerPage;
         }
 
-        if ($active = isset($actions['active'])) {
-            $fields['active'] = 'active';
-        }
-
-        if ($query) {
-            $stmt = $this->pdo->query($query . ' ' . $where . $pagination);
-        } else {
-            $stmt = $this->pdo->query(
-                sprintf(
-                    'SELECT %s FROM %s %s ORDER BY %s %s' . $pagination,
-                    implode(',', array_flip($fields)),
-                    $dbTable,
-                    $where,
-                    $orderColumn,
-                    $order
-                )
-            );
-        }
-
-        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $this->db->fetchByConfig($config, $pagination);
 
         foreach ($result as $key => $row) {
-            foreach ($fields as $name => $value) {
+            foreach ($columns as $name => $value) {
                 if (isset($action['modifier'][$name])) {
                     $callable            = $action['modifier'][$name];
                     $result[$key][$name] = $callable($result[$key]);
@@ -127,16 +92,15 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
         return $app['twig']->render($app['manager-config']['view']['index'], [
             'rows'         => $result,
-            'title'        => $fields,
-            'action'       => $actions,
-            'pk'           => $pk,
-            'header'       => $header,
-            'icon'         => $icon,
+            'title'        => $columns,
+            'action'       => $config->getAction(),
+            'header'       => $config->getHeader(),
+            'icon'         => $config->getIcon(),
             'total'        => $total,
             'pages'        => $pages,
             'pagination'   => $pagination,
             'currentTable' => $dbTable,
-            'search'       => $search,
+            'search'       => $config->getSearch(),
             'currentPage'  => $page,
         ]);
     }
@@ -419,7 +383,6 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     public function active(Application $app, $dbTable, $id)
     {
         $action = $app['manager-config']['manager'][$dbTable]['index'];
-        $fields = $app['manager-config']['manager'][$dbTable]['index']['columns'];
         $pk     = isset($action['pk']) ? $action['pk'] : 'id';
 
         $stmt = $this->pdo->query(
