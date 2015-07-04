@@ -52,7 +52,12 @@ class PdoAdapter implements AdapterInterface
     {
         $pages      = ceil($total / $itemPerPage);
         $offset     = ($page * $itemPerPage) - $itemPerPage;
-        $pagination = ' LIMIT ' . $offset . ',' . $itemPerPage;
+        $pagination = sprintf(' LIMIT %s,%s', $offset, $itemPerPage);
+
+        return [
+            $pagination,
+            $pages
+        ];
     }
 
     /**
