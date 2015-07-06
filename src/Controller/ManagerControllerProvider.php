@@ -61,8 +61,6 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     {
         $config     = new Node($app, $dbTable, 'index');
         $columns    = $config->getColumns();
-        $pagination = '';
-        $pages      = 0;
 
         if ($request->getQueryString() && $config->getSearch()) {
             foreach ($config->getSearchInputs() as $input) {
@@ -72,12 +70,9 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
         $total = $this->db->count($config);
 
-        if (isset($action['pagination'])) {
-            $itemPerPage = $config->getItemPerPage();
-            $pages       = ceil($total / $itemPerPage);
-            $offset      = ($page * $itemPerPage) - $itemPerPage;
-            $pagination  = ' LIMIT ' . $offset . ',' . $itemPerPage;
-        }
+        list($pagination, $pages) = $config->getPagination()
+            ? $this->db->limit($total, $config->getItemPerPage(), $page)
+            : ['', 0];
 
         $result = $this->db->fetchByConfig($config, $pagination);
 
