@@ -124,7 +124,7 @@ final class Node // implements ConfigNode
      */
     public function getPrimaryKey()
     {
-        return $this->primaryKey;
+        return $this->primaryKey ?: 'id';
     }
 
     /**
