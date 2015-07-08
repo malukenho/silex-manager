@@ -102,11 +102,11 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
     public function create(Application $app, $dbTable)
     {
-        $action = $app['manager-config']['manager'][$dbTable]['new'];
-        $fields = $app['manager-config']['manager'][$dbTable]['new']['columns'];
-        $pk     = isset($action['pk']) ? $action['pk'] : 'id';
-        $header = isset($action['header']) ? $action['header'] : sprintf('Create: %s', $dbTable);
-        $icon   = isset($action['icon']) ? $action['icon'] : 'edit';
+        $config = new Node($app, $dbTable, 'new');
+        $fields = $config->getColumns();
+        $pk     = $config->getPrimaryKey();
+        $header = $config->getHeader() ?: sprintf('Create: %s', $dbTable);
+        $icon   = $config->getIcon() ?: 'edit';
 
         /** @var \Symfony\Component\Form\Form $form */
         $form = $app['form.factory']->createBuilder('form');
