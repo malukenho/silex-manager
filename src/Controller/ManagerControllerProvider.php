@@ -201,16 +201,16 @@ final class ManagerControllerProvider implements ControllerProviderInterface
                 );
             }
 
-        } else {
-            return $app['twig']->render($app['manager-config']['view']['new'], [
-                'title'        => $fields,
-                'pk'           => $pk,
-                'header'       => $header,
-                'icon'         => $icon,
-                'form'         => $form->createView(),
-                'currentTable' => $dbTable,
-            ]);
         }
+
+        return $app['twig']->render($app['manager-config']['view']['new'], [
+            'title'        => $fields,
+            'pk'           => $pk,
+            'header'       => $header,
+            'icon'         => $icon,
+            'form'         => $form->createView(),
+            'currentTable' => $dbTable,
+        ]);
     }
 
     public function edit(Application $app, $dbTable, $id)
