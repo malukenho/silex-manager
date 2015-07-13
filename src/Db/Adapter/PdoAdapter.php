@@ -118,4 +118,14 @@ class PdoAdapter implements AdapterInterface
 
         return $this->fetchAll($sql);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function execute($query, $params = [])
+    {
+        $statement = $this->pdo->prepare($query);
+
+        return $statement->execute($params);
+    }
 }
