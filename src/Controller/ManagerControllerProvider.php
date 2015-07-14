@@ -130,11 +130,11 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
     public function createSave(Application $app, Request $request, $dbTable)
     {
-        $action = $app['manager-config']['manager'][$dbTable]['new'];
-        $fields = $app['manager-config']['manager'][$dbTable]['new']['columns'];
-        $pk     = isset($action['pk']) ? $action['pk'] : 'id';
-        $header = isset($action['header']) ? $action['header'] : sprintf('Create: %s', $dbTable);
-        $icon   = isset($action['icon']) ? $action['icon'] : 'edit';
+        $config = new Node($app, $dbTable, 'new');
+        $fields = $config->getColumns();
+        $pk     = $config->getPrimaryKey();
+        $header = $config->getHeader() ?: sprintf('Create: %s', $dbTable);
+        $icon   = $config->getIcon() ?: 'edit';
         $after  = isset($action['after']) ? $action['after'] : '';
         $before = isset($action['before']) ? $action['before'] : '';
 
@@ -152,65 +152,58 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $form->handleRequest($request);
 
         // Save if valid
-        if ($form->isValid()) {
-
-            $requestData = $request->request->all();
-            if (isset($requestData['form']['_token'])) {
-                unset($requestData['form']['_token']);
-            }
-
-            if ($before && is_callable($before)) {
-                $before($requestData['form']);
-            }
-
-            foreach ($requestData['form'] as $key => $row) {
-                if (isset($action['modifier'][$key])) {
-                    $callable                  = $action['modifier'][$key];
-                    $requestData['form'][$key] = $callable($requestData['form'][$key], $requestData['form']);
-                }
-            }
-
-            $requestData['form'] = array_filter($requestData['form']);
-
-            $stmt = $this->pdo->prepare(
-                sprintf(
-                    'INSERT INTO %s(%s) VALUES(%s)',
-                    $dbTable,
-                    implode(', ', array_keys($requestData['form'])),
-                    '"' . implode('", "', array_map('addslashes', $requestData['form'])) . '"'
-                )
-            );
-
-            if ($stmt->execute()) {
-
-                if ($after && is_callable($after)) {
-                    $after($requestData['form']);
-                }
-
-                $app['session']
-                    ->getFlashBag()
-                    ->add(
-                        'messageSuccess',
-                        'Added with success'
-                    );
-
-                return $app->redirect(
-                    $app['url_generator']->generate('manager-index', [
-                        'dbTable' => $dbTable,
-                    ])
-                );
-            }
-
+        if (! $form->isValid()) {
+            return $app['twig']->render($app['manager-config']['view']['new'], [
+                'title'        => $fields,
+                'pk'           => $pk,
+                'header'       => $header,
+                'icon'         => $icon,
+                'form'         => $form->createView(),
+                'currentTable' => $dbTable,
+            ]);
         }
 
-        return $app['twig']->render($app['manager-config']['view']['new'], [
-            'title'        => $fields,
-            'pk'           => $pk,
-            'header'       => $header,
-            'icon'         => $icon,
-            'form'         => $form->createView(),
-            'currentTable' => $dbTable,
-        ]);
+        $requestData = $request->request->all();
+        if (isset($requestData['form']['_token'])) {
+            unset($requestData['form']['_token']);
+        }
+
+        if ($before && is_callable($before)) {
+            $before($requestData['form']);
+        }
+
+        foreach ($requestData['form'] as $key => $row) {
+            if (isset($action['modifier'][$key])) {
+                $callable                  = $action['modifier'][$key];
+                $requestData['form'][$key] = $callable($requestData['form'][$key], $requestData['form']);
+            }
+        }
+
+        $requestData['form'] = array_filter($requestData['form']);
+
+        $query = sprintf(
+            'INSERT INTO %s(%s) VALUES(%s)',
+            $config->getDbTable(),
+            implode(', ', array_keys($requestData['form'])),
+            '"' . implode('", "', array_map('addslashes', $requestData['form'])) . '"'
+        );
+
+        if ($this->db->execute($query)) {
+
+            if ($after && is_callable($after)) {
+                $after($requestData['form']);
+            }
+
+            $app['session']
+                ->getFlashBag()
+                ->add('messageSuccess', 'Added with success');
+
+            return $app->redirect(
+                $app['url_generator']->generate('manager-index', [
+                    'dbTable' => $dbTable,
+                ])
+            );
+        }
     }
 
     public function edit(Application $app, $dbTable, $id)
