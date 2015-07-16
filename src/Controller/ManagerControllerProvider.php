@@ -219,16 +219,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $header = isset($action['header']) ? $action['header'] : sprintf('Edit: %s', $dbTable);
         $icon   = isset($action['icon']) ? $action['icon'] : 'edit';
 
-        $stmt = $this->pdo->query(
-            sprintf(
-                'SELECT * FROM %s WHERE %s = %s',
-                $dbTable,
-                $pk,
-                $id
-            )
-        );
-
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $result = $this->db->fetch(sprintf('SELECT * FROM %s WHERE %s = %s', $dbTable, $pk, $id));
 
         /** @var \Symfony\Component\Form\Form $form */
         $form = $app['form.factory']->createBuilder('form');
