@@ -271,53 +271,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $form->handleRequest($request);
 
         // Save if valid
-        if ($form->isValid()) {
-
-            $requestData = $request->request->all();
-            if (isset($requestData['form']['_token'])) {
-                unset($requestData['form']['_token']);
-            }
-
-            foreach ($requestData['form'] as $key => $row) {
-                if (isset($action['modifier'][$key])) {
-                    $callable                  = $action['modifier'][$key];
-                    $requestData['form'][$key] = $callable($requestData['form'][$key], $requestData['form']);
-                }
-            }
-
-            $requestData['form'] = array_filter($requestData['form']);
-
-            $insert = '';
-            foreach ($requestData['form'] as $column => $value) {
-                $insert .= sprintf('%s="%s", ', $column, addslashes($value));
-            }
-
-            $stmt = $this->pdo->query(
-                sprintf(
-                    'UPDATE %s SET %s WHERE %s = %s',
-                    $dbTable,
-                    rtrim($insert, ', '),
-                    $pk,
-                    $id
-                )
-            );
-
-            if ($stmt->execute()) {
-                $app['session']
-                    ->getFlashBag()
-                    ->add(
-                        'messageSuccess',
-                        'Added with success'
-                    );
-
-                return $app->redirect(
-                    $app['url_generator']->generate('manager-index', [
-                        'dbTable' => $dbTable,
-                    ])
-                );
-            }
-
-        } else {
+        if (! $form->isValid()) {
             return $app['twig']->render($app['manager-config']['view']['edit'], [
                 'title'        => $fields,
                 'pk'           => $pk,
@@ -326,6 +280,45 @@ final class ManagerControllerProvider implements ControllerProviderInterface
                 'form'         => $form->createView(),
                 'currentTable' => $dbTable,
             ]);
+        }
+
+        $requestData = $request->request->all();
+        if (isset($requestData['form']['_token'])) {
+            unset($requestData['form']['_token']);
+        }
+
+        foreach ($requestData['form'] as $key => $row) {
+            if (isset($action['modifier'][$key])) {
+                $callable                  = $action['modifier'][$key];
+                $requestData['form'][$key] = $callable($requestData['form'][$key], $requestData['form']);
+            }
+        }
+
+        $requestData['form'] = array_filter($requestData['form']);
+
+        $insert = '';
+        foreach ($requestData['form'] as $column => $value) {
+            $insert .= sprintf('%s="%s", ', $column, addslashes($value));
+        }
+
+        $sql = sprintf(
+            'UPDATE %s SET %s WHERE %s = %s',
+            $dbTable,
+            rtrim($insert, ', '),
+            $pk,
+            $id
+        );
+
+        if ($this->db->execute($sql)) {
+            $app['session']
+                ->getFlashBag()
+                ->add('messageSuccess', 'Edited with success');
+
+            return $app->redirect(
+                $app['url_generator']->generate('manager-index', [
+                    'dbTable' => $dbTable,
+                ])
+            );
         }
     }
 
@@ -346,57 +339,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         if ($stmt->execute()) {
             $app['session']
                 ->getFlashBag()
-                ->add(
-                    'messageSuccess',
-                    'Deleted with success'
-                );
-
-            return $app->redirect(
-                $app['url_generator']->generate('manager-index', [
-                    'dbTable' => $dbTable,
-                ])
-            );
-        }
-    }
-
-    public function active(Application $app, $dbTable, $id)
-    {
-        $action = $app['manager-config']['manager'][$dbTable]['index'];
-        $pk     = isset($action['pk']) ? $action['pk'] : 'id';
-
-        $stmt = $this->pdo->query(
-            sprintf(
-                'SELECT active FROM %s WHERE %s = %s',
-                $dbTable,
-                $pk,
-                $id
-            )
-        );
-
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        $active = 1;
-        if ($result['active'] === '1') {
-            $active = 0;
-        }
-
-        $stmt = $this->pdo->query(
-            sprintf(
-                'UPDATE %s SET %s WHERE %s = %s',
-                $dbTable,
-                'active = ' . $active,
-                $pk,
-                $id
-            )
-        );
-
-        if ($stmt->execute()) {
-            $app['session']
-                ->getFlashBag()
-                ->add(
-                    'messageSuccess',
-                    (($active === 1) ? 'Activated with success' : 'Deactivated with success')
-                );
+                ->add('messageSuccess', 'Deleted with success');
 
             return $app->redirect(
                 $app['url_generator']->generate('manager-index', [
