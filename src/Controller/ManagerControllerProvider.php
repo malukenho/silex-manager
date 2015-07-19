@@ -324,19 +324,16 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
     public function delete(Application $app, $dbTable, $id)
     {
-        $action = $app['manager-config']['manager'][$dbTable]['delete'];
-        $pk     = isset($action['pk']) ? $action['pk'] : 'id';
+        $config = new Node($app, $dbTable, 'delete');
 
-        $stmt = $this->pdo->query(
-            sprintf(
-                'DELETE FROM %s WHERE %s = %s',
-                $dbTable,
-                $pk,
-                $id
-            )
+        $sql = sprintf(
+            'DELETE FROM %s WHERE %s = %s',
+            $config->getDbTable(),
+            $config->getPrimaryKey(),
+            $id
         );
 
-        if ($stmt->execute()) {
+        if ($this->db->execute($sql)) {
             $app['session']
                 ->getFlashBag()
                 ->add('messageSuccess', 'Deleted with success');
