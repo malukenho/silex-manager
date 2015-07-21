@@ -324,7 +324,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
     public function delete(Application $app, $dbTable, $id)
     {
-        $config = new Node($app, $dbTable, 'delete');
+        $config = new Node($app, $dbTable, 'index');
 
         $sql = sprintf(
             'DELETE FROM %s WHERE %s = %s',
