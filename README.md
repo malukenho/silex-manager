@@ -37,9 +37,12 @@ $app->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo));
 
 ## Routes
 
-| Router                        |  Bind   |          |
-|-------------------------------|---------|----------|
-| /{dbTable}/page/{pageNumber}  |         |          |
+| Router                        |       Bind     |
+|-------------------------------|----------------|
+| /{dbTable}/page/{pageNumber}  | manager-index  | 
+| /{dbTable}/new                | manager-new    | 
+| /{dbTable}/edit/{id}          | manager-edit   | 
+| /{dbTable}/delete/{id}        | manager-delete | 
 
 ### Custom queries
 
