@@ -32,7 +32,8 @@ First of all, you need to register the `ManagerControllerProvider` to your `Sile
 For now you should pass a `PDO` instance to the our provider.
 
 ```php
-$app->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo));
+$adapter = new \Manager\Db\Adapter\PdoAdapter($pdo);
+$app->mount('/manager', new \Manager\Controller\ManagerControllerProvider($adapter));
 ```
 
 ## Routes
