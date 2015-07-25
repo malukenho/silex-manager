@@ -20,7 +20,7 @@ $ composer require malukenho/silex-manager
 
 - twig/twig
 - symfony/twig-bridge
-- session
+- symfony/session
 - symfony/form
 - symfony/security-csrf
 - symfony/translation
@@ -132,7 +132,7 @@ $app['manager-config'] = [
 
 Missing documentation
 
-### views
+### Views
 
 Missing documentation
 
