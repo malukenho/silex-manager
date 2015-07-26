@@ -19,7 +19,6 @@ $ composer require malukenho/silex-manager
 ## Requirements
 
 - twig/twig
-- reduce/db
 - symfony/twig-bridge
 - session
 - symfony/form
