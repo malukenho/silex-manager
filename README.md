@@ -58,7 +58,7 @@ to configure the interface/callbacks/fields.
 $app['manager-config'] = [
     // Inside the `manager` key we have config for tables
     'manager' => [
-        'users' => require __DIR__ . '/config/user.php',
+        'users' => require __DIR__ . '/config/users.php',
     ],
     // Configuration pointing to default view
     // You can use your own views
@@ -66,6 +66,48 @@ $app['manager-config'] = [
         'index' => 'manager-index.twig',
         'new'   => 'manager-new.twig',
         'edit'  => 'manager-edit.twig',
+    ],
+];
+```
+
+Let's look at the `index` action on `/config/users.php` config definition file.
+
+```php
+return [
+
+    // List action
+    'index' => [
+        // Define columns
+        // column name on db => label
+        'columns' => [
+            'id'    => 'Id',
+            'name'  => 'Name',
+            'email' => 'Email',
+        ],
+        // UI page header
+        'header' => 'Manager users',
+         // UI page icon
+        'icon'   => 'user',
+        // Allow pagination
+        'pagination' => true,
+        // Show items per page
+        'item_per_page' => 10,
+        // Actions allowed
+        'action' => [
+            'new' => 'Create a new user',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+        ],
+        // Configuration for search field
+        'search' => [
+            'input' =>[
+                [
+                    'name' => 'name',
+                    'placeholder' => 'Find by name',
+                ],
+            ],
+            'button' => 'Filter'
+        ],
     ],
 ];
 ```
