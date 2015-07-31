@@ -44,6 +44,31 @@ $app->mount('/manager', new Manager\Controller\ManagerControllerProvider($pdo));
 | /{dbTable}/edit/{id}          | manager-edit   | 
 | /{dbTable}/delete/{id}        | manager-delete | 
 
+### Configurations
+
+You have to put some configuration on `$app['manager-config']` to make use 
+of power from Silex Manager.
+
+Bellow you can see an example how to make a basic configuration.
+Note that `users` refers to the name of table, and this is including a file 
+to configure the interface/callbacks/fields.
+
+```php
+$app['manager-config'] = [
+    // Inside the `manager` key we have config for tables
+    'manager' => [
+        'users' => require __DIR__ . '/config/user.php',
+    ],
+    // Configuration pointing to default view
+    // You can use your own views
+    'view'    => [
+        'index' => 'manager-index.twig',
+        'new'   => 'manager-new.twig',
+        'edit'  => 'manager-edit.twig',
+    ],
+];
+```
+
 ### Custom queries
 
 Sometimes you will need make a custom query to show data on the list page.
@@ -63,15 +88,29 @@ $app['manager-config'] = [
 
 ### Actions
 
+Missing documentation
+
 ### views
+
+Missing documentation
 
 ### Columns
 
+Missing documentation
+
 ### Before
+
+Missing documentation
 
 ### After
 
+Missing documentation
+
 ### Custom names
 
+Missing documentation
+
 ### Modifiers
+
+Missing documentation
 
