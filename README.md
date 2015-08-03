@@ -12,6 +12,8 @@ We know that CRUD based apps is so bad, but It's needed some times.
 
 ## Installing
 
+You have to set the `minimum-stability` to `dev` and then run:
+
 ```
 $ composer require malukenho/silex-manager
 ```
