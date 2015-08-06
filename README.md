@@ -37,22 +37,42 @@ $adapter = new \Manager\Db\Adapter\PdoAdapter($pdo);
 $app->mount('/manager', new \Manager\Controller\ManagerControllerProvider($adapter));
 ```
 
+When you install the `Silex Manager`, you don't need to install Silex, because it's already installed.
+And all dependencies is installed too. You just want to config this dependencies properly.
+
+```php
+$app->register(new Provider\TwigServiceProvider(), [
+    // Use this path to load the default views (It's use semantic-ui from CDN)
+    'twig.path' => __DIR__ . '/vendor/malukenho/silex-manager/views',
+]);
+
+$app->register(new Provider\UrlGeneratorServiceProvider());
+$app->register(new Provider\SessionServiceProvider());
+$app->register(new Provider\ServiceControllerServiceProvider());
+$app->register(new Provider\FormServiceProvider());
+$app->register(new Provider\ValidatorServiceProvider());
+$app->register(new Provider\TranslationServiceProvider(), [
+    'translator.domains' => [],
+]);
+
+```
+
 ## Routes
 
 | Router                        |       Bind     |
 |-------------------------------|----------------|
-| /{dbTable}/page/{pageNumber}  | manager-index  | 
-| /{dbTable}/new                | manager-new    | 
-| /{dbTable}/edit/{id}          | manager-edit   | 
-| /{dbTable}/delete/{id}        | manager-delete | 
+| /{dbTable}/page/{pageNumber}  | manager-index  |
+| /{dbTable}/new                | manager-new    |
+| /{dbTable}/edit/{id}          | manager-edit   |
+| /{dbTable}/delete/{id}        | manager-delete |
 
 ### Configurations
 
-You have to put some configuration on `$app['manager-config']` to make use 
+You have to put some configuration on `$app['manager-config']` to make use
 of power from Silex Manager.
 
 Bellow you can see an example how to make a basic configuration.
-Note that `users` refers to the name of table, and this is including a file 
+Note that `users` refers to the name of table, and this is including a file
 to configure the interface/callbacks/fields.
 
 ```php
