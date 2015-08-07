@@ -6,6 +6,8 @@ We know that CRUD based apps is so bad, but It's needed some times.
 
 **Now you can create crap application in minutes**
 
+![Silex Manager](preview.png)
+
 ## Author
 
 - [Jefersson Nathan](https://github.com/malukenho)
