@@ -21,7 +21,7 @@ namespace Manager\Config;
 use Manager\Exception\MissingConfigException;
 use Silex\Application;
 
-final class Node // implements ConfigNode
+final class Node
 {
     const ACTION_INDEX = 'index';
 
