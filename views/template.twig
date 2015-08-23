@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silex Manager</title>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.3/semantic.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.3/semantic.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div class="menu ui large">
+            <a href="{{ app.request.baseUrl }}" class="ui item">
+                <i class="icon home"></i>
+                Home
+            </a>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="ui content one wide">
+            {% block content %}<h1>Welcome to Silex Manager.</h1>{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

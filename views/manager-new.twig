@@ -1,0 +1,30 @@
+{% extends 'template.twig' %}
+
+{% block content %}
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <h1><i class="ui icon {{ icon }}"></i> {{ header }}</h1>
+
+    {% for message in app.session.getFlashBag.get('messageSuccess') %}
+        <div class="ui success message">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+
+    {% for message in app.session.getFlashBag.get('messageError') %}
+        <div class="ui error message">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <form method="post" class="ui form">
+        {{ form_widget(form) }}
+
+        <p>&nbsp;</p>
+
+        <button class="ui button blue">Register</button>
+    </form>
+
+{% endblock %}

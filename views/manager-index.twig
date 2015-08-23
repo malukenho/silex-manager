@@ -1,0 +1,111 @@
+{% extends 'template.twig' %}
+
+{% block content %}
+
+    <p>&nbsp;</p>
+
+    <h1><i class="ui icon circular {{ icon }}"></i> {{ header }}</h1>
+
+
+    {% if action.new is defined %}
+        <a href="{{ url("manager-new", { dbTable: currentTable }) }}" class="ui button blue">{{ action.new }}</a>
+    {% endif %}
+
+
+    {% if search.input is defined %}
+    <form method="get" class="ui form input">
+        {% for searchField in search.input %}
+        {% if searchField.type is defined and searchField.type == "choice" %}
+            <select name="{{ searchField.name }}" id="{{ searchField.name }}" placeholder="{{ searchField.placeholder }}" >
+                <option value="">{{ searchField.null_choice }}</option>
+                {% for key,choice in searchField.choices %}
+                <option{% if app.request.get('' ~ searchField.name|replace('.', '_')) == key %} selected {% endif %} value="{{ key|e }}">{{ choice|e }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <input type="text" value="{{ app.request.get('' ~ searchField.name|replace('.', '_')) }}" name="{{ searchField.name }}" class="ui input" style="width: 250px;" placeholder="{{ searchField.placeholder }}" />&nbsp;
+        {% endif %}
+        {% endfor %}
+
+        &nbsp; <button class="ui button">{{ search.button }}</button>
+    </form>
+    {% endif %}
+
+    {% for message in app.session.getFlashBag.get('messageSuccess') %}
+        <div class="ui success message">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+
+    {% for message in app.session.getFlashBag.get('messageError') %}
+        <div class="ui error message">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <table class="ui table">
+        <thead>
+        <tr>
+            {% for section in title %}
+            <th>{{ section }}</th>
+            {% endfor %}
+            {% if action %}
+                <th>Actions</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for rowInfo in rows %}
+        <tr>
+            {% for info in rowInfo %}
+                {% if rowInfo.active is defined and rowInfo.active == info %}
+                    {% if info == 1 %}
+                        <td><i class="ui icon green check"></i> </td>
+                    {% else %}
+                        <td><i class="ui icon red remove"></i> </td>
+                    {% endif %}
+                {% else %}
+                    <td>{{ info|raw }}</td>
+                {% endif %}
+            {% endfor %}
+            {% if action %}
+                <td>
+
+                    {% if action.edit is defined %}<a href="{{ url("manager-edit", {
+                        "id": rowInfo.id,
+                        "dbTable": currentTable,
+                    }) }}"><i class="ui icon blue edit"></i>{{ action.edit }} </a>{% endif %}
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    {% if action.delete is defined %}<a href="{{ url("manager-delete", {
+                        "id": rowInfo.id,
+                        "dbTable": currentTable,
+                    }) }}"><i class="ui icon red trash"></i>{{ action.delete }} </a>{% endif %}
+                </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="float: left; font-size: 16px; margin-top: 5px"><i><b>Total:</b> {{ total }}</i></div>
+
+    {% if pagination and pages > 1 %}
+        <div class="ui basic buttons" style="float: right">
+            <a href="{{ url("manager-index", { "dbTable": currentTable, "page": 1 }) }}"  class="ui labeled icon button">
+                <i class="left chevron icon"></i>
+                primeira
+            </a>
+        {% for page in 1..pages %}
+            <a href="{{ url("manager-index", { "dbTable": currentTable, "page": page }) }}"
+               class="ui button {% if page == currentPage %}active{% endif %}">{{ page }}</a>
+        {% endfor %}
+
+            <a href="{{ url("manager-index", { "dbTable": currentTable, "page": pages }) }}" class="ui right labeled icon button">
+                Ultima
+                <i class="right chevron icon"></i>
+            </a>
+        </div>
+    {% endif %}
+
+{% endblock %}
