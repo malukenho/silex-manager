@@ -2,101 +2,199 @@
 
 namespace Manager\Config;
 
+use Manager\Exception\MissingConfigException;
 use Silex\Application;
 
 final class Node // implements ConfigNode
 {
-    public function __construct(Application $app)
+    const ACTION_INDEX = 'index';
+
+    /**
+     * @var string
+     */
+    private $primaryKey;
+    /**
+     * @var string
+     */
+    private $dbTable;
+    /**
+     * @var string
+     */
+    private $order;
+    /**
+     * @var string
+     */
+    private $orderColumn;
+    /**
+     * @var mixed[]
+     */
+    private $columns;
+    /**
+     * @var string
+     */
+    private $header;
+    /**
+     * @var string
+     */
+    private $icon;
+    /**
+     * @var string
+     */
+    private $pagination;
+    /**
+     * @var int
+     */
+    private $itemPerPage;
+    /**
+     * @var null
+     */
+    private $search;
+    /**
+     * @var string
+     */
+    private $query;
+    /**
+     * @var string
+     */
+    private $where;
+
+    /**
+     * @param Application $app
+     * @param string      $dbTable
+     * @param string      $action
+     */
+    public function __construct(Application $app, $dbTable, $action)
     {
-        if (isset($app['manager-config'])) {
-
+        if (! isset($app['manager-config'])) {
+            throw new MissingConfigException('The key "manager-config" was not found on $app.');
         }
-        // $action      = $app['manager-config']['manager'][$dbTable]['index'];
-        // $fields      = $app['manager-config']['manager'][$dbTable]['index']['columns'];
-        // $order       = isset($action['order']) ? $action['order'] : 'DESC';
-        // $orderColumn = isset($action['orderColumn']) ? $action['orderColumn'] : 'id';
-        // $pk          = isset($action['pk']) ? $action['pk'] : 'id';
-        // $actions     = isset($action['action']) ? $action['action'] : false;
-        // $header      = isset($action['header']) ? $action['header'] : sprintf('Manager: %s', $dbTable);
-        // $icon        = isset($action['icon']) ? $action['icon'] : 'setting';
-        // $pagination  = '';
-        // $itemPerPage = isset($action['item_per_page']) ? $action['item_per_page'] : 10;
-        // $pages       = 0;
-        // $search      = isset($action['search']) ? $action['search'] : null;
-        // $where       = '';
-        // $query       = isset($action['query']) ? $action['query'] : '';
 
-        // if ($request->getQueryString()) {
-        //     if (isset($search['input'])) {
-        //         $where .= ' WHERE ';
-        //         foreach ($search['input'] as $input) {
-        //             $where .= $input['name'] . ' LIKE "%' . $request->get(str_replace('.', '_', $input['name'])) . '%" AND ';
-        //         }
+        if (! isset($app['manager-config']['manager'])) {
+            throw new MissingConfigException('The key "manager-config.manager" was not found on $app.');
+        }
 
-        //         $where = trim($where, ' AND ');
-        //     }
-        // }
+        if (! isset($app['manager-config']['manager'][$dbTable])) {
+            throw new MissingConfigException(sprintf(
+                'The key "manager-config.manager.%s" was not found on $app.',
+                $dbTable
+            ));
+        }
 
-        // if ($query) {
-        //     $queryCount = preg_replace('/^SELECT (.+) FROM/', 'SELECT COUNT(*) as total FROM', $query);
-        //     $stmt       = $this->pdo->query($queryCount . ' ' . $where);
-        //     $result     = $stmt->fetch(\PDO::FETCH_ASSOC);
-        //     $total      = $result['total'];
-        // } else {
-        //     $stmt   = $this->pdo->query(sprintf('SELECT COUNT(*) as total FROM %s %s', $dbTable, $where));
-        //     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        //     $total  = $result['total'];
-        // }
+        if (! isset($app['manager-config']['manager'][$dbTable][$action])) {
+            throw new MissingConfigException(sprintf(
+                'The key "manager-config.manager.%s" was not found on $app.',
+                $dbTable
+            ));
+        }
 
-        // if (isset($action['pagination'])) {
-        //     $pages      = ceil($total / $itemPerPage);
-        //     $offset     = ($page * $itemPerPage) - $itemPerPage;
-        //     $pagination = ' LIMIT ' . $offset . ',' . $itemPerPage;
-        // }
+        $tableConfig = $app['manager-config']['manager'][$dbTable][$action];
 
-        // if ($active = isset($actions['active'])) {
-        //     $fields['active'] = 'active';
-        // }
+        $this->dbTable     = $dbTable;
+        $this->columns     = $tableConfig['columns'];
+        $this->order       = isset($tableConfig['order']) ? $tableConfig['order'] : 'DESC';
+        $this->orderColumn = isset($tableConfig['orderColumn']) ? $tableConfig['orderColumn'] : 'id';
+        $this->primaryKey  = isset($tableConfig['pk']) ? $tableConfig['pk'] : 'id';
+        $this->action      = isset($tableConfig['action']) ? $tableConfig['action'] : false;
+        $this->header      = isset($tableConfig['header']) ? $tableConfig['header'] : sprintf('Manager: %s', $dbTable);
+        $this->icon        = isset($tableConfig['icon']) ? $tableConfig['icon'] : 'setting';
+        $this->itemPerPage = isset($tableConfig['item_per_page']) ? $tableConfig['item_per_page'] : 10;
+        $this->search      = isset($tableConfig['search']) ? $tableConfig['search'] : null;
+        $this->query       = isset($tableConfig['query']) ? $tableConfig['query'] : '';
+    }
 
-        // if ($query) {
-        //     $stmt = $this->pdo->query($query . ' ' . $where . $pagination);
-        // } else {
-        //     $stmt = $this->pdo->query(
-        //         sprintf(
-        //             'SELECT %s FROM %s %s ORDER BY %s %s' . $pagination,
-        //             implode(',', array_flip($fields)),
-        //             $dbTable,
-        //             $where,
-        //             $orderColumn,
-        //             $order
-        //         )
-        //     );
-        // }
+    /**
+     * @return string
+     */
+    public function getPrimaryKey()
+    {
+        return $this->primaryKey;
+    }
 
-        // $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    /**
+     * @return string
+     */
+    public function getDbTable()
+    {
+        return $this->dbTable;
+    }
 
-        // foreach ($result as $key => $row) {
-        //     foreach ($fields as $name => $value) {
-        //         if (isset($action['modifier'][$name])) {
-        //             $callable            = $action['modifier'][$name];
-        //             $result[$key][$name] = $callable($result[$key]);
-        //         }
-        //     }
-        // }
+    /**
+     * @return string
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
 
-        // return $app['twig']->render($app['manager-config']['view']['index'], [
-        //     'rows'         => $result,
-        //     'title'        => $fields,
-        //     'action'       => $actions,
-        //     'pk'           => $pk,
-        //     'header'       => $header,
-        //     'icon'         => $icon,
-        //     'total'        => $total,
-        //     'pages'        => $pages,
-        //     'pagination'   => $pagination,
-        //     'currentTable' => $dbTable,
-        //     'search'       => $search,
-        //     'currentPage'  => $page,
-        // ]);
+    /**
+     * @return string
+     */
+    public function getOrderColumn()
+    {
+        return $this->orderColumn;
+    }
+
+    /**
+     * @return \mixed[]
+     */
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHeader()
+    {
+        return $this->header;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPagination()
+    {
+        return $this->pagination;
+    }
+
+    /**
+     * @return int
+     */
+    public function getItemPerPage()
+    {
+        return $this->itemPerPage;
+    }
+
+    /**
+     * @return null
+     */
+    public function getSearch()
+    {
+        return $this->search;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWhere()
+    {
+        return $this->where;
     }
 }
