@@ -82,12 +82,21 @@ final class Node // implements ConfigNode
 
         if (! isset($app['manager-config']['manager'][$dbTable][$action])) {
             throw new MissingConfigException(sprintf(
-                'The key "manager-config.manager.%s" was not found on $app.',
-                $dbTable
+                'The key "manager-config.manager.%s.%s" was not found on $app.',
+                $dbTable,
+                $action
             ));
         }
 
         $tableConfig = $app['manager-config']['manager'][$dbTable][$action];
+
+        if (! isset($tableConfig['columns'])) {
+            throw new MissingConfigException(sprintf(
+                'The key "manager-config.manager.%s.%s.columns" was not found on $app.',
+                $dbTable,
+                $action
+            ));
+        }
 
         $this->dbTable     = $dbTable;
         $this->columns     = $tableConfig['columns'];
