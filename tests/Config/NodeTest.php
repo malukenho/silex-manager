@@ -19,7 +19,6 @@
 namespace ManagerTest\Config;
 
 use Manager\Config\Node;
-use Manager\Exception\MissingConfigException;
 use Silex\Application;
 
 /**
@@ -39,8 +38,8 @@ class NodeTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckForTheConfigKey($wrongConfig)
     {
-        /** @var \Silex\Application||PHPUnit_Framework_MockObject_MockObject $appMock */
-        $appMock = $this->getMockBuilder(Application::class)
+        /** @var \Silex\Application|\PHPUnit_Framework_MockObject_MockObject $appMock */
+        $appMock = $this->getMockBuilder('Silex\Application')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -54,14 +53,14 @@ class NodeTest extends \PHPUnit_Framework_TestCase
             ->with('manager-config')
             ->willReturn($wrongConfig);
 
-        $this->setExpectedException(MissingConfigException::class);
+        $this->setExpectedException('Manager\Exception\MissingConfigException');
         new Node($appMock, 'dummy', 'index');
     }
 
     public function testCreateNodeWithOnlyRequiredConfigUsesTheDefaultValues()
     {
-        /** @var \Silex\Application||PHPUnit_Framework_MockObject_MockObject $appMock */
-        $appMock = $this->getMockBuilder(Application::class)
+        /** @var \Silex\Application|\PHPUnit_Framework_MockObject_MockObject $appMock */
+        $appMock = $this->getMockBuilder('Silex\Application')
             ->disableOriginalConstructor()
             ->getMock();
 
