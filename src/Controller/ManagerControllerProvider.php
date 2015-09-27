@@ -30,11 +30,6 @@ use Silex\ControllerProviderInterface;
 final class ManagerControllerProvider implements ControllerProviderInterface
 {
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
      * @var AdapterInterface
      */
     private $db;
