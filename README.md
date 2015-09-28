@@ -1,6 +1,8 @@
 Silex Manager
 =============
 
+[![Build Status](https://travis-ci.org/malukenho/silex-manager.svg?branch=master)](https://travis-ci.org/malukenho/silex-manager)
+
 Silex Manager is a easy way to create crap CRUD based application.
 We know that CRUD based apps is so bad, but It's needed some times.
 
