@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -41,43 +42,43 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function whereLike($name, $value)
     {
-        $this->where[] = $name . ' LIKE "%' . $value . '%"';
+        $this->where[] = $name.' LIKE "%'.$value.'%"';
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetch($query, $column = null)
     {
-        $stmt   = $this->pdo->query($query);
+        $stmt = $this->pdo->query($query);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return $column ? $result[$column] : $result;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function limit($total, $itemPerPage, $page)
     {
-        $pages      = ceil($total / $itemPerPage);
-        $offset     = ($page * $itemPerPage) - $itemPerPage;
+        $pages = ceil($total / $itemPerPage);
+        $offset = ($page * $itemPerPage) - $itemPerPage;
         $pagination = sprintf(' LIMIT %s,%s', $offset, $itemPerPage);
 
         return [
             $pagination,
-            $pages
+            $pages,
         ];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetchAll($sql, $params = [])
     {
@@ -88,7 +89,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function count(Node $config)
     {
@@ -113,7 +114,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetchByConfig(Node $config, $pagination)
     {
@@ -124,7 +125,7 @@ class PdoAdapter implements AdapterInterface
         }
 
         $sql = sprintf(
-            'SELECT %s FROM %s %s ORDER BY %s %s' . $pagination,
+            'SELECT %s FROM %s %s ORDER BY %s %s'.$pagination,
             implode(',', array_flip($config->getColumns())),
             $config->getDbTable(),
             $config->getWhere(),
@@ -136,7 +137,7 @@ class PdoAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function execute($query, $params = [])
     {

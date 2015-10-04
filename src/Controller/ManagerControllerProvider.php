@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,8 +22,8 @@ namespace Manager\Controller;
 use Manager\Config\Node;
 use Manager\Db\Adapter\AdapterInterface;
 use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Jefersson Nathan <malukenho@phpse.net>
@@ -43,7 +44,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function connect(Application $app)
     {
@@ -70,8 +71,8 @@ final class ManagerControllerProvider implements ControllerProviderInterface
      */
     public function index(Application $app, Request $request, $dbTable, $page)
     {
-        $config     = new Node($app, $dbTable, 'index');
-        $columns    = $config->getColumns();
+        $config = new Node($app, $dbTable, 'index');
+        $columns = $config->getColumns();
 
         if ($request->getQueryString() && $config->getSearch()) {
             foreach ($config->getSearchInputs() as $input) {
@@ -90,24 +91,24 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         foreach ($result as $key => $row) {
             foreach ($columns as $name => $value) {
                 if (isset($action['modifier'][$name])) {
-                    $callable            = $action['modifier'][$name];
+                    $callable = $action['modifier'][$name];
                     $result[$key][$name] = $callable($result[$key]);
                 }
             }
         }
 
         return $app['twig']->render($app['manager-config']['view']['index'], [
-            'rows'         => $result,
-            'title'        => $columns,
-            'action'       => $config->getAction(),
-            'header'       => $config->getHeader(),
-            'icon'         => $config->getIcon(),
-            'total'        => $total,
-            'pages'        => $pages,
-            'pagination'   => $pagination,
+            'rows' => $result,
+            'title' => $columns,
+            'action' => $config->getAction(),
+            'header' => $config->getHeader(),
+            'icon' => $config->getIcon(),
+            'total' => $total,
+            'pages' => $pages,
+            'pagination' => $pagination,
             'currentTable' => $dbTable,
-            'search'       => $config->getSearch(),
-            'currentPage'  => $page,
+            'search' => $config->getSearch(),
+            'currentPage' => $page,
         ]);
     }
 
@@ -115,26 +116,26 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     {
         $config = new Node($app, $dbTable, 'new');
         $fields = $config->getColumns();
-        $pk     = $config->getPrimaryKey();
+        $pk = $config->getPrimaryKey();
         $header = $config->getHeader() ?: sprintf('Create: %s', $dbTable);
-        $icon   = $config->getIcon() ?: 'edit';
+        $icon = $config->getIcon() ?: 'edit';
 
         /** @var \Symfony\Component\Form\Form $form */
         $form = $app['form.factory']->createBuilder('form');
 
         foreach ($fields as $name => $field) {
-            $type    = isset($field['type']) ? $field['type'] : null;
+            $type = isset($field['type']) ? $field['type'] : null;
             $options = isset($field['options']) ? $field['options'] : [];
 
             $form->add($name, $type, $options);
         }
 
         return $app['twig']->render($app['manager-config']['view']['new'], [
-            'title'        => $fields,
-            'pk'           => $pk,
-            'header'       => $header,
-            'icon'         => $icon,
-            'form'         => $form->getForm()->createView(),
+            'title' => $fields,
+            'pk' => $pk,
+            'header' => $header,
+            'icon' => $icon,
+            'form' => $form->getForm()->createView(),
             'currentTable' => $dbTable,
         ]);
     }
@@ -143,17 +144,17 @@ final class ManagerControllerProvider implements ControllerProviderInterface
     {
         $config = new Node($app, $dbTable, 'new');
         $fields = $config->getColumns();
-        $pk     = $config->getPrimaryKey();
+        $pk = $config->getPrimaryKey();
         $header = $config->getHeader() ?: sprintf('Create: %s', $dbTable);
-        $icon   = $config->getIcon() ?: 'edit';
-        $after  = isset($action['after']) ? $action['after'] : '';
+        $icon = $config->getIcon() ?: 'edit';
+        $after = isset($action['after']) ? $action['after'] : '';
         $before = isset($action['before']) ? $action['before'] : '';
 
         /** @var \Symfony\Component\Form\Form $form */
         $form = $app['form.factory']->createBuilder('form');
 
         foreach ($fields as $name => $field) {
-            $type    = isset($field['type']) ? $field['type'] : null;
+            $type = isset($field['type']) ? $field['type'] : null;
             $options = isset($field['options']) ? $field['options'] : [];
 
             $form->add($name, $type, $options);
@@ -163,13 +164,13 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $form->handleRequest($request);
 
         // Save if valid
-        if (! $form->isValid()) {
+        if (!$form->isValid()) {
             return $app['twig']->render($app['manager-config']['view']['new'], [
-                'title'        => $fields,
-                'pk'           => $pk,
-                'header'       => $header,
-                'icon'         => $icon,
-                'form'         => $form->createView(),
+                'title' => $fields,
+                'pk' => $pk,
+                'header' => $header,
+                'icon' => $icon,
+                'form' => $form->createView(),
                 'currentTable' => $dbTable,
             ]);
         }
@@ -185,7 +186,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
         foreach ($requestData['form'] as $key => $row) {
             if (isset($action['modifier'][$key])) {
-                $callable                  = $action['modifier'][$key];
+                $callable = $action['modifier'][$key];
                 $requestData['form'][$key] = $callable($requestData['form'][$key], $requestData['form']);
             }
         }
@@ -196,7 +197,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
             'INSERT INTO %s(%s) VALUES(%s)',
             $config->getDbTable(),
             implode(', ', array_keys($requestData['form'])),
-            '"' . implode('", "', array_map('addslashes', $requestData['form'])) . '"'
+            '"'.implode('", "', array_map('addslashes', $requestData['form'])).'"'
         );
 
         if ($this->db->execute($query)) {
@@ -225,9 +226,9 @@ final class ManagerControllerProvider implements ControllerProviderInterface
             $fields = $app['manager-config']['manager'][$dbTable]['new']['columns'];
         }
 
-        $pk     = isset($action['pk']) ? $action['pk'] : 'id';
+        $pk = isset($action['pk']) ? $action['pk'] : 'id';
         $header = isset($action['header']) ? $action['header'] : sprintf('Edit: %s', $dbTable);
-        $icon   = isset($action['icon']) ? $action['icon'] : 'edit';
+        $icon = isset($action['icon']) ? $action['icon'] : 'edit';
 
         $result = $this->db->fetch(sprintf('SELECT * FROM %s WHERE %s = %s', $dbTable, $pk, $id));
 
@@ -235,7 +236,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $form = $app['form.factory']->createBuilder('form');
 
         foreach ($fields as $name => $field) {
-            $type    = isset($field['type']) ? $field['type'] : null;
+            $type = isset($field['type']) ? $field['type'] : null;
             $options = isset($field['options']) ? $field['options'] : [];
 
             $form->add($name, $type, $options);
@@ -245,11 +246,11 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $form->setData($result);
 
         return $app['twig']->render($app['manager-config']['view']['edit'], [
-            'title'        => $fields,
-            'pk'           => $pk,
-            'header'       => $header,
-            'icon'         => $icon,
-            'form'         => $form->createView(),
+            'title' => $fields,
+            'pk' => $pk,
+            'header' => $header,
+            'icon' => $icon,
+            'form' => $form->createView(),
             'currentTable' => $dbTable,
         ]);
     }
@@ -263,15 +264,15 @@ final class ManagerControllerProvider implements ControllerProviderInterface
             $action = $app['manager-config']['manager'][$dbTable]['new'];
             $fields = $app['manager-config']['manager'][$dbTable]['new']['columns'];
         }
-        $pk     = isset($action['pk']) ? $action['pk'] : 'id';
+        $pk = isset($action['pk']) ? $action['pk'] : 'id';
         $header = isset($action['header']) ? $action['header'] : sprintf('Edit: %s', $dbTable);
-        $icon   = isset($action['icon']) ? $action['icon'] : 'edit';
+        $icon = isset($action['icon']) ? $action['icon'] : 'edit';
 
         /** @var \Symfony\Component\Form\Form $form */
         $form = $app['form.factory']->createBuilder('form');
 
         foreach ($fields as $name => $field) {
-            $type    = isset($field['type']) ? $field['type'] : null;
+            $type = isset($field['type']) ? $field['type'] : null;
             $options = isset($field['options']) ? $field['options'] : [];
 
             $form->add($name, $type, $options);
@@ -281,13 +282,13 @@ final class ManagerControllerProvider implements ControllerProviderInterface
         $form->handleRequest($request);
 
         // Save if valid
-        if (! $form->isValid()) {
+        if (!$form->isValid()) {
             return $app['twig']->render($app['manager-config']['view']['edit'], [
-                'title'        => $fields,
-                'pk'           => $pk,
-                'header'       => $header,
-                'icon'         => $icon,
-                'form'         => $form->createView(),
+                'title' => $fields,
+                'pk' => $pk,
+                'header' => $header,
+                'icon' => $icon,
+                'form' => $form->createView(),
                 'currentTable' => $dbTable,
             ]);
         }
@@ -299,7 +300,7 @@ final class ManagerControllerProvider implements ControllerProviderInterface
 
         foreach ($requestData['form'] as $key => $row) {
             if (isset($action['modifier'][$key])) {
-                $callable                  = $action['modifier'][$key];
+                $callable = $action['modifier'][$key];
                 $requestData['form'][$key] = $callable($requestData['form'][$key], $requestData['form']);
             }
         }

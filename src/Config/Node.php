@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -81,22 +82,22 @@ class Node
      */
     public function __construct(Application $app, $dbTable, $action)
     {
-        if (! isset($app['manager-config'])) {
+        if (!isset($app['manager-config'])) {
             throw new MissingConfigException('The key "manager-config" was not found on $app.');
         }
 
-        if (! isset($app['manager-config']['manager'])) {
+        if (!isset($app['manager-config']['manager'])) {
             throw new MissingConfigException('The key "manager-config.manager" was not found on $app.');
         }
 
-        if (! isset($app['manager-config']['manager'][$dbTable])) {
+        if (!isset($app['manager-config']['manager'][$dbTable])) {
             throw new MissingConfigException(sprintf(
                 'The key "manager-config.manager.%s" was not found on $app.',
                 $dbTable
             ));
         }
 
-        if (! isset($app['manager-config']['manager'][$dbTable][$action])) {
+        if (!isset($app['manager-config']['manager'][$dbTable][$action])) {
             throw new MissingConfigException(sprintf(
                 'The key "manager-config.manager.%s.%s" was not found on $app.',
                 $dbTable,
@@ -106,7 +107,7 @@ class Node
 
         $tableConfig = $app['manager-config']['manager'][$dbTable][$action];
 
-        if (! isset($tableConfig['columns'])) {
+        if (!isset($tableConfig['columns'])) {
             throw new MissingConfigException(sprintf(
                 'The key "manager-config.manager.%s.%s.columns" was not found on $app.',
                 $dbTable,
@@ -114,17 +115,17 @@ class Node
             ));
         }
 
-        $this->dbTable     = $dbTable;
-        $this->columns     = $tableConfig['columns'];
-        $this->order       = isset($tableConfig['order']) ? $tableConfig['order'] : 'DESC';
+        $this->dbTable = $dbTable;
+        $this->columns = $tableConfig['columns'];
+        $this->order = isset($tableConfig['order']) ? $tableConfig['order'] : 'DESC';
         $this->orderColumn = isset($tableConfig['orderColumn']) ? $tableConfig['orderColumn'] : 'id';
-        $this->primaryKey  = isset($tableConfig['pk']) ? $tableConfig['pk'] : 'id';
-        $this->action      = isset($tableConfig['action']) ? $tableConfig['action'] : false;
-        $this->header      = isset($tableConfig['header']) ? $tableConfig['header'] : sprintf('Manager: %s', $dbTable);
-        $this->icon        = isset($tableConfig['icon']) ? $tableConfig['icon'] : 'setting';
+        $this->primaryKey = isset($tableConfig['pk']) ? $tableConfig['pk'] : 'id';
+        $this->action = isset($tableConfig['action']) ? $tableConfig['action'] : false;
+        $this->header = isset($tableConfig['header']) ? $tableConfig['header'] : sprintf('Manager: %s', $dbTable);
+        $this->icon = isset($tableConfig['icon']) ? $tableConfig['icon'] : 'setting';
         $this->itemPerPage = isset($tableConfig['item_per_page']) ? $tableConfig['item_per_page'] : 10;
-        $this->search      = isset($tableConfig['search']) ? $tableConfig['search'] : null;
-        $this->query       = isset($tableConfig['query']) ? $tableConfig['query'] : '';
+        $this->search = isset($tableConfig['search']) ? $tableConfig['search'] : null;
+        $this->query = isset($tableConfig['query']) ? $tableConfig['query'] : '';
     }
 
     /**
@@ -208,7 +209,6 @@ class Node
     }
 
     /**
-     * @return null
      */
     public function getSearch()
     {

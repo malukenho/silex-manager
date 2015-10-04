@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,10 +20,9 @@
 namespace ManagerTest\Config;
 
 use Manager\Config\Node;
-use Silex\Application;
 
 /**
- * Tests for {@see \Manager\Config\Node}
+ * Tests for {@see \Manager\Config\Node}.
  *
  * @author Jefersson Nathan <malukenho@phpse.net>
  *
@@ -83,7 +83,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase
                     'manager' => [
                         'dummy' => [
                             'index' => [
-                                'columns' => []
+                                'columns' => [],
                             ],
                         ],
                     ],
