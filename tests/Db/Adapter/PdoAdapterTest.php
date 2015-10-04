@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,7 +22,7 @@ namespace ManagerTest\Db\Adapter;
 use Manager\Db\Adapter\PdoAdapter;
 
 /**
- * Tests for {@see \Manager\Db\Adapter\PdoAdapter}
+ * Tests for {@see \Manager\Db\Adapter\PdoAdapter}.
  *
  * @author Jefersson Nathan <malukenho@phpse.net>
  *
@@ -81,7 +82,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expected));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->fetch('SQL QUERY');
+        $result = $adapter->fetch('SQL QUERY');
 
         $this->assertSame($expected, $result);
     }
@@ -99,7 +100,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->limit(10, 2, 0);
+        $result = $adapter->limit(10, 2, 0);
 
         $this->assertSame($expected, $result);
     }
@@ -107,7 +108,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     public function testShouldFetchAllData()
     {
         $expected = 'expected';
-        $params   = [
+        $params = [
             'twitter' => '@malukenho',
         ];
 
@@ -132,14 +133,14 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expected));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->fetchAll('SQL QUERY', $params);
+        $result = $adapter->fetchAll('SQL QUERY', $params);
 
         $this->assertSame($expected, $result);
     }
 
     public function testShouldCountRows()
     {
-        /** @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
+        /* @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
         $config = $this->getMockBuilder('Manager\Config\Node')
             ->disableOriginalConstructor()
             ->getMock();
@@ -160,14 +161,14 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->count($config);
+        $result = $adapter->count($config);
 
         $this->assertNull($result);
     }
 
     public function testShouldCountRowsUsingSpecifiedQuery()
     {
-        /** @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
+        /* @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
         $config = $this->getMockBuilder('Manager\Config\Node')
             ->disableOriginalConstructor()
             ->getMock();
@@ -196,14 +197,14 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->count($config);
+        $result = $adapter->count($config);
 
         $this->assertNull($result);
     }
 
     public function testShouldFetchConfig()
     {
-        /** @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
+        /* @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
         $config = $this->getMockBuilder('Manager\Config\Node')
             ->disableOriginalConstructor()
             ->getMock();
@@ -228,14 +229,14 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->fetchByConfig($config, $pagination = 1);
+        $result = $adapter->fetchByConfig($config, $pagination = 1);
 
         $this->assertSame(1, $result);
     }
 
     public function testShouldFetchConfigUsingSpecifiedQuery()
     {
-        /** @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
+        /* @var \Manager\Config\Node|\PHPUnit_Framework_MockObject_MockObject $pdo */
         $config = $this->getMockBuilder('Manager\Config\Node')
             ->disableOriginalConstructor()
             ->getMock();
@@ -260,7 +261,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->fetchByConfig($config, $pagination = 1);
+        $result = $adapter->fetchByConfig($config, $pagination = 1);
 
         $this->assertSame(1, $result);
     }
@@ -268,7 +269,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
     public function testShouldExecuteSql()
     {
         $expected = 1;
-        $params   = [
+        $params = [
             'twitter' => '@malukenho',
         ];
 
@@ -288,7 +289,7 @@ class PdoAdapterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         $adapter = new PdoAdapter($pdo);
-        $result  = $adapter->execute('SQL QUERY', $params);
+        $result = $adapter->execute('SQL QUERY', $params);
 
         $this->assertSame($expected, $result);
     }
