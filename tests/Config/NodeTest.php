@@ -19,7 +19,6 @@
 namespace ManagerTest\Config;
 
 use Manager\Config\Node;
-use Silex\Application;
 
 /**
  * Tests for {@see \Manager\Config\Node}
