@@ -42,12 +42,12 @@ class NodeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $appMock->expects($this->once())
+        $appMock->expects(self::once())
             ->method('offsetExists')
             ->with('manager-config')
             ->willReturn(true);
 
-        $appMock->expects($this->any())
+        $appMock->expects(self::any())
             ->method('offsetGet')
             ->with('manager-config')
             ->willReturn($wrongConfig);
@@ -63,22 +63,22 @@ class NodeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $appMock->expects($this->any())
+        $appMock->expects(self::any())
             ->method('offsetExists')
             ->with('manager-config')
             ->will(
-                $this->returnValue([
+                self::returnValue([
                     'manager' => [
 
                     ],
                 ]
                 ));
 
-        $appMock->expects($this->any())
+        $appMock->expects(self::any())
             ->method('offsetGet')
             ->with('manager-config')
             ->will(
-                $this->returnValue([
+                self::returnValue([
                     'manager' => [
                         'dummy' => [
                             'index' => [
@@ -89,13 +89,13 @@ class NodeTest extends \PHPUnit_Framework_TestCase
                 ]));
 
         $node = new Node($appMock, 'dummy', 'index');
-        $this->assertSame(10, $node->getItemPerPage());
-        $this->assertSame([], $node->getColumns());
-        $this->assertSame('dummy', $node->getDbTable());
-        $this->assertSame('Manager: dummy', $node->getHeader());
-        $this->assertSame('setting', $node->getIcon());
-        $this->assertEmpty($node->getQuery());
-        $this->assertNull($node->getSearch());
+        self::assertSame(10, $node->getItemPerPage());
+        self::assertSame([], $node->getColumns());
+        self::assertSame('dummy', $node->getDbTable());
+        self::assertSame('Manager: dummy', $node->getHeader());
+        self::assertSame('setting', $node->getIcon());
+        self::assertEmpty($node->getQuery());
+        self::assertNull($node->getSearch());
     }
 
     public function getWrongConfiguration()
