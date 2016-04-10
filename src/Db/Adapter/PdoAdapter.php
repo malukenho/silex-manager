@@ -119,7 +119,8 @@ class PdoAdapter implements AdapterInterface
     {
         if ($config->getQuery()) {
             return $this->fetchAll(
-                sprintf('%s %s', $config->getQuery(), $config->getWhere(), $pagination)
+                sprintf('%s %s', $config->getQuery(), $config->getWhere()),
+                $pagination
             );
         }
 
