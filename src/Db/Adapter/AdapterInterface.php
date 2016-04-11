@@ -20,9 +20,22 @@ namespace Manager\Db\Adapter;
 
 use Manager\Config\Node;
 
+/**
+ * @author  Jefersson Nathan <malukenho@phpse.net>
+ */
 interface AdapterInterface
 {
+
     public function whereLike($name, $value);
+
+    /**
+     * Returns a single database row or column value.
+     *
+     * @param string      $query
+     * @param null|string $column
+     *
+     * @return string|integer|mixed[]
+     */
     public function fetch($query, $column = null);
 
     /**
@@ -33,8 +46,32 @@ interface AdapterInterface
      */
     public function execute($query, $params = []);
 
+    /**
+     * Similar to `PDO::fetchAll`, Its returns an array of data.
+     *
+     * @param string $sql
+     * @param array  $params
+     *
+     * @return mixed[][]
+     */
     public function fetchAll($sql, $params = []);
+
+    /**
+     * @param Node $config
+     * @param string $pagination
+     *
+     * @return mixed
+     */
     public function fetchByConfig(Node $config, $pagination);
+
     public function limit($total, $itemPerPage, $page);
+
+    /**
+     * Return a number from total results
+     *
+     * @param Node $config
+     *
+     * @return integer
+     */
     public function count(Node $config);
 }
