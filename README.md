@@ -109,6 +109,12 @@ return [
             'name'  => 'Name',
             'email' => 'Email',
         ],
+        // Modifies how the colums value is showed up
+        'modifier' => [
+            'id' => function (array $data) {
+                return '#' . $data['id'];
+            },
+        ],
         // UI page header
         'header' => 'Manager users',
          // UI page icon
@@ -160,7 +166,12 @@ Missing documentation
 
 ### Views
 
-Missing documentation
+Currently We provide simples views. You can take a look at `views` folder to implements
+your owns presentation files. New presentation files can be configured by follow directive.
+
+```php
+
+```
 
 ### Columns
 
