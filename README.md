@@ -115,6 +115,8 @@ return [
                 return '#' . $data['id'];
             },
         ],
+        // Set a primary key name, It's ID by default
+        'pk' => 'id',
         // UI page header
         'header' => 'Manager users',
          // UI page icon
