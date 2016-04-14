@@ -145,6 +145,29 @@ return [
 ];
 ```
 
+## New form
+
+One interesting thing that you can do when sent a form, is call `before`, and
+`after` functions, that allows you to execute things before the form is processed and after
+ it respectively.
+ 
+```php
+'before' => function (array $data) use ($app) {
+
+    if ($app['auth.model']->hasStudentWithMail($data['email'])) {
+        $app['session']->getFlashBag()->add(
+            'messageError',
+            'Email já cadastrado, por favor escolha outro email.'
+        );
+
+        $url = $_SERVER['REQUEST_URI'];
+
+        header("Location: {$url}");
+        exit;
+    }
+},  
+```
+
 ### Custom queries
 
 Sometimes you will need make a custom query to show data on the list page.
