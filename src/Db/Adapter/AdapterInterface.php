@@ -25,7 +25,6 @@ use Manager\Config\Node;
  */
 interface AdapterInterface
 {
-
     public function whereLike($name, $value);
 
     /**
@@ -34,7 +33,7 @@ interface AdapterInterface
      * @param string      $query
      * @param null|string $column
      *
-     * @return string|integer|mixed[]
+     * @return string|int|mixed[]
      */
     public function fetch($query, $column = null);
 
@@ -57,7 +56,7 @@ interface AdapterInterface
     public function fetchAll($sql, $params = []);
 
     /**
-     * @param Node $config
+     * @param Node   $config
      * @param string $pagination
      *
      * @return mixed
@@ -71,7 +70,7 @@ interface AdapterInterface
      *
      * @param Node $config
      *
-     * @return integer
+     * @return int
      */
     public function count(Node $config);
 }
